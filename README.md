@@ -3,14 +3,14 @@ My Learning About PHP
 
 ##About me
 
-Name : Hai
-Age : 24
-Live in : Ha Noi
-Language : PHP & Javascript ( Java in future )
-Favorite CMS : Wordpress
-Favorite FW : Native PHP, Laravel, Phalcon, Native Javascript, Backbones, jQuery
-Biography : Music, Learn code
-Email : lenanghai@gmail.com
+- [x]Name : Hai
+- [x]Age : 24
+- [x]Live in : Ha Noi
+- [x]Language : PHP & Javascript ( Java in future )
+- [x]Favorite CMS : Wordpress
+- [x]Favorite FW : Native PHP, Laravel, Phalcon, Native Javascript, Backbones, jQuery
+- [x]Biography : Music, Learn code
+- [x]Email : lenanghai@gmail.com
 
 
 ##Tài liệu tham khảo tiếng việt */
