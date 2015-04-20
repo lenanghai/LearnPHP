@@ -17,6 +17,7 @@ My Learning About PHP
 - http://kungfuphp.com/
 - http://code.freetuts.net/
 - http://daynhauhoc.com
+- http://laptrinh.io
 
 ## Ebooks in English */
 - http://codeacademy.com
