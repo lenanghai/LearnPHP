@@ -1,0 +1,5 @@
+I've got universal solution that will work in any php file inside wp-content folder without any adjustments or needing to know what is misterious 'path/to/wordpress'
+```
+require_once( explode( "wp-content" , __FILE__ )[0] . "wp-load.php" );
+```
+It just automatically goes up to root of wordpress and loads wp-load.php
