@@ -1,230 +1,136 @@
 <?php
 /**
-* @author Kai Dev
-* @since 1.0
-* @date 4/2015
-*/
+ * Generate Support Widget
+ * @author Kai
+ * @author_url http://github.com/lenanghai
+ * @package WP_Widget
+ */
+add_action('widgets_init', create_function('', "register_widget('Gtid_Support_Online');"));
+class Gtid_Support_Online extends WP_Widget {
+	function Gtid_Support_Online() {
+		$widget_ops = array( 'classname' => 'support-online-widget', 'description' => __('Thêm nick yahoo, skype hỗ trợ trên website', 'genesis') );
+		$control_ops = array( 'width' => 505, 'height' => 250, 'id_base' => 'support-online' );
+		$this->WP_Widget( 'support-online', __('RT - Hỗ trợ trực tuyến', 'genesis'), $widget_ops, $control_ops );
+	}
 
-if (!defined('ABSPATH'))
-    exit('No direct script access allowed');
+	function widget($args, $instance) {
+		extract($args);
+		$instance = wp_parse_args( (array)$instance, array(
+			'title' => '',
+            'number_supporter' => 1,
+            'tel' => '',
+			'hotline' => '',
+            'email' => '',
+            'link_1' => '',
+            'link_1_text' => '',
+            'link_2' => '',
+            'link_2_text' => ''
+		) );
 
-class AWEProduct {
+			echo $before_widget;
+			if (!empty($instance['title']))
+				echo $before_title . apply_filters('widget_title', $instance['title']) . $after_title;
+            echo '<div class = "wrap">';
+            ?>
 
-    protected $args;
-    protected $tax_values;
+            <div id="supporter-info">
 
-    public function __construct() {
-        // Setting something
-        add_action('wp_ajax_product_filter', array($this, 'refreshProduct'));
-        add_action('wp_ajax_nopriv_product_filter', array($this, 'refreshProduct'));
-        //Setting args
-        $this->args = array();
-        $this->args['post_type'] = 'product';
-        $this->args['tax_query'] = array('relation' => 'AND');
-        $this->args['post_status'] = 'publish';
-    }
-
-    /**
-     * Set Tax Query
-     * @param type $args
-     * @param type $value
-     */
-    public function setTaxQuery(&$args, $name, $value) {
-        $values = explode(",", $value);
-        $this->args['tax_query'][] = array(
-            'taxonomy' => $name,
-            'field' => 'slug',
-            'terms' => $values,
-        );
-    }
-
-    /**
-     * Set Price Query
-     * @param type $args
-     * @param type $value
-     */
-    public function setPriceQuery(&$args, $value) {
-        $values = explode(",", $value);
-        if (count($values) != 2) {
-            die();
-        }
-        // Get Price Range
-        $min = intval($values[0]);
-        $max = intval($values[1]);
-        $price_value = array($min, $max);
-        $this->args['meta_query'][] = $price_value;
-    }
-
-    /**
-     * Set Order Query
-     * @param type $args
-     * @param type $value
-     */
-    public function setOrderbyQuery(&$args, $value) {
-         $order = "ASC";
-         if (@ preg_match("/-/", $value)) {
-            list($orderby, $order) = explode("-", $value);
-        }else{
-            $orderby = $value;
-            $order = "ASC";
-        }       
-        
-        // default - menu_order
-        $this->args['orderby'] = 'menu_order title';
-        $this->args['order'] = $order == 'DESC' ? 'DESC' : 'ASC';
-
-        
-        switch ($orderby) {
-            case 'rand' :
-                $this->args['orderby'] = 'rand';
-                break;
-            case 'date' :
-                $this->args['orderby'] = 'date';
-                $this->args['order'] = $order == 'ASC' ? 'ASC' : 'DESC';
-                break;
-            case 'price' :
-                $this->args['orderby'] = 'meta_value_num';
-                $this->args['order'] = $order == 'desc' ? 'DESC' : 'ASC';
-                $this->args['meta_key'] = '_price';
-                break;
-            case 'popularity' :
-                $this->args['meta_key'] = 'total_sales';
-                break;
-        }
-        
-        
-    }
-
-    /**
-     * Set Paging Query
-     * @param type $args
-     * @param type $value
-     */
-    public function setPostPerPageQuery( &$args, $value ) {
-        $this->args['posts_per_page'] = $value;
-    }
-
-    /**
-     * Set Paging Query
-     * @param type $args
-     * @param page
-     */
-    public function setCurrentPage( &$args, $value ) {
-        $this->args['paged'] = $value;
-    }
-
-    /**
-     * Main Query via ajax
-     */
-    public function setMainQuery($args, $layout) {
-        $view = ($layout == "grid") ? "grid-cn" : "list-cn";
-        /**
-         * Main AJAX Query
-         */
-        echo '<pre>';
-        print_r($args);
-        echo '</pre>';
-        $wp_query = new WP_Query($args);
-        $a = "";
-        if ($wp_query->have_posts()) {
-            // do_action('woocommerce_before_shop_loop');
-            woocommerce_product_loop_start();
-            woocommerce_product_subcategories();
-            ob_start();
-            echo '<div class="' . $view . '">';
-            while ($wp_query->have_posts()) : $wp_query->the_post();
-                wc_get_template_part('content', $layout);
-            endwhile;
-            echo '</div>';
-            woocommerce_product_loop_end();
-            // do_action('woocommerce_after_shop_loop');
-            $a = ob_get_contents();
-            ob_get_clean();
-            echo $a;
-            wp_reset_postdata();
-        }
-        exit();
-    }
-
-    /**
-     * Refresh Product
-     * @return ProductList
-     */
-    public function refreshProduct() {
-
-        //By Product cat
-        if (!empty($_GET['product_cat'])) {
-            $value = $_GET['product_cat'];
-            $name = "product_cat";
-            $this->setTaxQuery($args, $name, $value);
-        }
-
-        //By Manufacture
-        if (!empty($_GET['manufacture'])) {
-            $value = $_GET['manufacture'];
-            $name = "manufacture";
-            $this->setTaxQuery($args, $name, $value);
-        }
-
-        //By Size
-        if (!empty($_GET['size'])) {
-            $value = $_GET['size'];
-            $name = "pa_size";
-            $this->setTaxQuery($args, $name, $value);
-        }
-
-        // By Color
-        if (!empty($_GET['color'])) {
-            $value = $_GET['color'];
-            $name = "pa_color";
-            $this->setTaxQuery($args, $name, $value);
-        }
-
-
-        // By Price
-        if (!empty($_GET['price'])) {
-            $price = $_GET['price'];
-            $this->setPriceQuery($args, $price);
-        }
-
-
-        // Order By
-
-        if (!empty($_GET['orderby'])) {
-            $value = $_GET['orderby'];
-            $this->setOrderbyQuery($args, $value);
-        }
-
-        // Show post
-
-        if (!empty($_GET['show'])) {
-            if($_GET['show']=="all"){
-                
-            }else{
-            $show = $_GET['show'];
-            $this->setPostPerPageQuery($args, $show);
+			<?php
+            if(!empty($instance['tel']) || !empty($instance['hotline']) || !empty($instance['email']) ) {
+                echo '<div class="hotline-area">';
+                echo !empty($instance['tel']) ? '<span>' . __('Hotline: ', 'genesis') . '</span><span  class="tel">'.$instance['tel'].'</span>&nbsp;&nbsp;' : '';
+                echo !empty($instance['hotline']) ? '<span>' . __('Hotline: ', 'genesis').'</span><span class="hotline">'.$instance['hotline'].'</span>' : '';
+                echo !empty($instance['email']) ? __('Email: ', 'genesis').'<span>'.$instance['email'].'</span>' : '';
+                echo '</div>';
             }
-        }
-       
-        // Current Page
-        
-        if(!empty($_GET['paged'])){
-            $value = $_GET['paged'];
-            $this->setCurrentPage($args, $value);            
-        }
-        
+            ?>
+
+				<?php
+				for($i = 1;$i<=$instance['number_supporter'];$i++){
+				?>
+					<div id="support-<?php echo $i; ?>" class="supporter">
+					<div class="info">
+				<?php if(!empty($instance['supporter_'.$i.'_name'])) : ?><span class="name"><?php echo $instance['supporter_'.$i.'_name']; ?></span><br /><?php endif; ?>
+				<?php if(!empty($instance['supporter_'.$i.'_phone'])) : ?><span class="phone"><?php echo $instance['supporter_'.$i.'_phone']; ?></span><?php endif; ?>
+					</div>
+				<div class="online">
+					<?php if(!empty($instance['supporter_'.$i.'_yahoo'])) : ?><p class="yahoo"><a href="<?php echo 'ymsgr:sendim?' . $instance['supporter_'.$i.'_yahoo']; ?>"><img src="<?php echo 'http://opi.yahoo.com/online?u='.$instance['supporter_'.$i.'_yahoo'].'&amp;m=g&amp;t='.$instance['supporter_'.$i.'_yahoo_status']; ?>" alt="<?php _e('Hỗ trợ trực tuyến','genesis'); ?>" /></a></p><?php endif; ?>
+
+					<?php if(!empty($instance['supporter_'.$i.'_skype'])) : ?><p class="skype"><a href="<?php echo 'skype:'.$instance['supporter_'.$i.'_skype'].'?chat'; ?>"><img src="http://mystatus.skype.com/smallclassic/<?php echo $instance['supporter_'.$i.'_skype']; ?>" style="border: none;" width="114" height="20" alt="My status" /></a></p><?php endif; ?>
+				</div>
+
+					</div>
+
+				<?php
+				}
+				?>
+			</div>
+
+			<?php
+            echo '<div class="clear"></div>';
+            echo '</div><!-- end .wrap -->';
+			echo $after_widget;
+	}
+
+	function update($new_instance, $old_instance) {
+		return $new_instance;
+	}
+
+	function form($instance) {
+
+		$instance = wp_parse_args( (array)$instance, array(
+			'title' => '',
+            'number_supporter' => 1,
+            'tel' => '',
+			'hotline' => '',
+            'email' => '',
+            'link_1' => '',
+            'link_1_text' => '',
+            'link_2' => '',
+            'link_2_text' => ''
+		) );
+
+?>
 
 
-        // View         
-        if (isset($_GET['view'])) {
-            $view = $_GET['view'];
-        } else {
-            $view = "list";
-        }
-        $args = $this->args;
-        // Set Main Query
-        $this->setMainQuery($args, $view);
-        exit();
-    }
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Tiêu đề', 'genesis'); ?>:</label>
+		<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>" style="width:95%;" /></p>
 
+        <hr />
+
+        <p><label for="<?php echo $this->get_field_id('number_supporter'); ?>"><?php _e('Số hỗ trợ viên', 'genesis'); ?>:</label>
+		<input type="text" id="<?php echo $this->get_field_id('number_supporter'); ?>" name="<?php echo $this->get_field_name('number_supporter'); ?>" value="<?php echo esc_attr( $instance['number_supporter'] ); ?>" style="width:20%;" />
+        <input type="submit" name="savewidget" id="savewidget" class="button-primary widget-control-save" value="Lưu" />
+        <img alt="" style="padding-bottom: 4px;" title="" class="ajax-feedback " src="<?php echo home_url('/'); ?>wp-admin/images/wpspin_light.gif"></p>
+
+        <?php for($i = 1;$i<=$instance['number_supporter'];$i++){   ?>
+            <div style="width: 47%; padding: 5px; margin: 5px 0; background: #eee; <?php echo $i % 2 ==0 ? 'float: right;' : 'float: left;'; ?>"  >
+            <strong><?php _e('Hỗ trợ viên ', 'genesis'); echo $i; ?></strong>
+    		<p><label for="<?php echo $this->get_field_id('supporter_'.$i.'_name'); ?>"><?php _e('Tên', 'genesis'); ?>:</label>
+    		<input type="text" id="<?php echo $this->get_field_id('supporter_'.$i.'_name'); ?>" name="<?php echo $this->get_field_name('supporter_'.$i.'_name'); ?>" value="<?php echo esc_attr( $instance['supporter_'.$i.'_name'] ); ?>" style="width:95%;" /></p>
+
+    		<p><label for="<?php echo $this->get_field_id('supporter_'.$i.'_phone'); ?>"><?php _e('Điện thoại', 'genesis'); ?>:</label>
+    		<input type="text" id="<?php echo $this->get_field_id('supporter_'.$i.'_phone'); ?>" name="<?php echo $this->get_field_name('supporter_'.$i.'_phone'); ?>" value="<?php echo esc_attr( $instance['supporter_'.$i.'_phone'] ); ?>" style="width:95%;" /></p>
+
+            <p><label for="<?php echo $this->get_field_id('supporter_'.$i.'_yahoo'); ?>"><?php _e('Yahoo ID(không gồm @yahoo.com)', 'genesis'); ?>:</label>
+    		<input type="text" id="<?php echo $this->get_field_id('supporter_'.$i.'_yahoo'); ?>" name="<?php echo $this->get_field_name('supporter_'.$i.'_yahoo'); ?>" value="<?php echo esc_attr( $instance['supporter_'.$i.'_yahoo'] ); ?>" style="width:95%;" /></p>
+
+			<p><label for="<?php echo $this->get_field_id('supporter_'.$i.'_yahoo_status'); ?>"><?php _e('Yahoo Icon', 'genesis'); ?>:</label>
+    		<select name="<?php echo $this->get_field_name('supporter_'.$i.'_yahoo_status'); ?>" id="<?php echo $this->get_field_id('supporter_'.$i.'_yahoo_status'); ?>">
+				<?php  for($j = 1; $j < 23; $j++ ) : ?>
+					<option value="<?php echo $j; ?>" <?php checked($j, $instance['supporter_'.$i.'_yahoo_status']); ?>><?php echo $j; ?></option>
+				<?php endfor; ?>
+			</select>
+			</p>
+
+            <p><label for="<?php echo $this->get_field_id('supporter_'.$i.'_skype'); ?>"><?php _e('Skype ID ', 'genesis'); ?>:</label>
+    		<input type="text" id="<?php echo $this->get_field_id('supporter_'.$i.'_skype'); ?>" name="<?php echo $this->get_field_name('supporter_'.$i.'_skype'); ?>" value="<?php echo esc_attr( $instance['supporter_'.$i.'_skype'] ); ?>" style="width:95%;" /></p>
+            </div>
+		<?php } ?>
+
+
+		<div class="clear"></div>
+
+	<?php
+	}
 }
