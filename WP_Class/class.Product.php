@@ -2,12 +2,16 @@
 /**
  * Generate Support Widget
  * @author Kai
- * @author_url http://github.com/lenanghai
+ * @version 1.0
+ * @since 4/2015
  * @package WP_Widget
  */
-add_action('widgets_init', create_function('', "register_widget('Gtid_Support_Online');"));
-class Gtid_Support_Online extends WP_Widget {
-	function Gtid_Support_Online() {
+
+// Register Widget
+add_action('widgets_init', create_function('', "register_widget('Kai_Support_Online');"));
+
+class Kai_Support_Online extends WP_Widget {
+	function Kai_Support_Online() {
 		$widget_ops = array( 'classname' => 'support-online-widget', 'description' => __('Thêm nick yahoo, skype hỗ trợ trên website', 'genesis') );
 		$control_ops = array( 'width' => 505, 'height' => 250, 'id_base' => 'support-online' );
 		$this->WP_Widget( 'support-online', __('RT - Hỗ trợ trực tuyến', 'genesis'), $widget_ops, $control_ops );
