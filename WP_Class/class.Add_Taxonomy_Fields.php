@@ -2,9 +2,10 @@
 /**
  * Add Color Box to Color Attribute ( custom taxonomy )
  * @author Kai Dev
+ * @version 1.0
  */
 
-// Check if Woocommerce Installed before
+// Check Woocommerce Install
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 if (is_plugin_active('woocommerce/woocommerce.php')) {
     include_once( ABSPATH . 'wp-content/plugins/woocommerce/woocommerce.php' );
