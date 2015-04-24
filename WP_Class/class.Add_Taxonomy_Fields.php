@@ -11,7 +11,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     include_once( ABSPATH . 'wp-content/plugins/woocommerce/woocommerce.php' );
 }
 
-
+// Main Class
 if (!class_exists('Awe_Attribute')) {
 
     class Awe_Attribute {
@@ -44,7 +44,7 @@ if (!class_exists('Awe_Attribute')) {
             ));
         }
 
-// Add box
+// Add custom fields box
         public function add_color_box() {
             ?>
             <div class="form-field">
