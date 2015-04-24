@@ -1,8 +1,9 @@
 <?php
 /**
  * Add Color Box to Color Attribute ( custom taxonomy )
+ * @package Wordpress
  * @author Kai Dev
- * @version 1.0
+ * @version 0.1.0
  */
 
 // Check Woocommerce Install
