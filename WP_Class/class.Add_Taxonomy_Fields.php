@@ -43,7 +43,7 @@ if (!class_exists('Awe_Attribute')) {
             ));
         }
 
-
+// Add box
         public function add_color_box() {
             ?>
             <div class="form-field">
