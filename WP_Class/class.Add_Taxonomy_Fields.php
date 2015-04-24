@@ -4,6 +4,7 @@
  * @author Kai Dev
  */
 
+// Check if Woocommerce Installed before
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 if (is_plugin_active('woocommerce/woocommerce.php')) {
     include_once( ABSPATH . 'wp-content/plugins/woocommerce/woocommerce.php' );
