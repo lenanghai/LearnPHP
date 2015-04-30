@@ -23,7 +23,7 @@ function kai_truncate( $str, $length = 40, $units = 'letters', $ellipsis = '&nbs
     }
 }
 
-// Kai Excerpt
+// Kai Excerpt 
 
 if ( ! function_exists( 'kai_excerpt' ) ) {
 // Limit content param
