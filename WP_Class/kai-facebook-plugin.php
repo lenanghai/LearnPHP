@@ -36,14 +36,6 @@ class Facebook_Like_Widget extends WP_Widget {
             $height = '239';
         }
 
-        if ($show_header == 'true') {
-            $height = '264';
-        }
-
-        if ($show_stream == 'true') {
-            $height = '600';
-        }
-
         echo $before_widget;
 
         if ($title) {
