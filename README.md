@@ -23,6 +23,7 @@ My Learning About PHP
 - http://codeacademy.com
 - http://tutplus.com
 - http://lynda.com
+- http://devtoolsecrets.com/
 - video torrent ( contact : lenanghai@gmail.com ) 
 
 ## 16 book recommended for programing
