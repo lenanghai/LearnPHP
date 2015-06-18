@@ -1,6 +1,7 @@
 <?php
 /**
 * Filter ajax fragments
+* @author : Kai
 */
 
 if (class_exists('woocommerce')) {
@@ -12,7 +13,7 @@ if (class_exists('woocommerce')) {
         global $woocommerce;
 
         ob_start();
-        awe_mini_cart();
+        // Do some things else
         $fragments['a.cart-contents'] = ob_get_clean();
 
         return $fragments;
