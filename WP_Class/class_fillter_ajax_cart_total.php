@@ -1,7 +1,7 @@
 <?php
 /**
 * Filter ajax fragments
-* /
+*/
 
 if (class_exists('woocommerce')) {
 
